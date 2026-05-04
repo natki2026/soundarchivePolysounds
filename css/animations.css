@@ -1,0 +1,38 @@
+/* ─── Scroll Reveal ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ─── Card hover ─── */
+.card,
+.feature-card,
+.service-card,
+.pain-card,
+.format-item {
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.card:hover,
+.feature-card:hover,
+.service-card:hover,
+.pain-card:hover {
+  box-shadow: 0 6px 20px rgba(0,51,102,0.1);
+  transform: translateY(-2px);
+}
+
+/* ─── FAQ accordion ─── */
+.faq-answer { transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+.faq-icon { transition: transform 0.3s ease; }
+.faq-item.is-open .faq-icon { transform: rotate(45deg); }
+
+/* ─── Button ─── */
+.btn-primary,
+.btn-secondary { transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease; }

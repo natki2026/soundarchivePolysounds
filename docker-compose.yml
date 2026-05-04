@@ -1,0 +1,46 @@
+services:
+  github-runner:
+    image: ghcr.io/myoung34/docker-github-actions-runner:latest
+    container_name: runner-template-claude-websitemd
+    restart: unless-stopped
+    environment:
+      - REPO_URL=https://github.com/natki2026/template-claude-websitemd
+      - ACCESS_TOKEN=${GITHUB_RUNNER_TOKEN}
+      - RUNNER_NAME=runner-template-claude-websitemd
+      - RUNNER_LABELS=self-hosted,lokal,template-claude-websitemd
+      - EPHEMERAL=false
+      - DISABLE_AUTO_UPDATE=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - runner-cache-template-claude-websitemd:/_work
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower-template-claude-websitemd
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 86400 --cleanup --include-stopped
+
+  git-sync-worker:
+    image: alpine/git:latest
+    container_name: git-sync-template-claude-websitemd
+    restart: unless-stopped
+    volumes:
+      - ./:/repo
+    working_dir: /repo
+    environment:
+      - PAT=${GITHUB_RUNNER_TOKEN}
+    entrypoint: >
+      /bin/sh -c "
+      git config --global --add safe.directory /repo &&
+      git config --global credential.helper '!f() { echo username=token; echo password=$$PAT; }; f' &&
+      git config --global pull.rebase false &&
+      while true; do
+        git pull || true;
+        sleep 120;
+      done
+      "
+
+volumes:
+  runner-cache-template-claude-websitemd:

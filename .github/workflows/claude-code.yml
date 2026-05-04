@@ -1,0 +1,31 @@
+name: Claude Code Action
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  claude_job:
+    if: contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: ${{ github.event.comment.body }}
+          show_full_output: true
+          claude_args: "--allowedTools Bash,Write,Edit,Read,Glob,Grep --permission-mode acceptEdits"
+
+      - name: Push changes
+        run: |
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions"
+          git push origin main || echo "Nothing to push"
